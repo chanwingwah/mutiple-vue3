@@ -1,4 +1,4 @@
-import { resolve } from 'path'
+import { resolve, join } from 'path'
 import { loadEnv } from 'vite'
 import type { UserConfig, ConfigEnv } from 'vite'
 import Vue from '@vitejs/plugin-vue'
@@ -14,6 +14,7 @@ import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import { createStyleImportPlugin, ElementPlusResolve } from 'vite-plugin-style-import'
 import UnoCSS from 'unocss/vite'
 import { visualizer } from 'rollup-plugin-visualizer'
+import { getHtmlInputs, generateNavigationPlugin, moveHtmlToRootPlugin } from './build/multi-page.js'
 
 // https://vitejs.dev/config/
 const root = process.cwd()
@@ -21,6 +22,8 @@ const root = process.cwd()
 function pathResolve(dir: string) {
   return resolve(root, '.', dir)
 }
+
+// 多页面配置已抽取到 build/multi-page.js
 
 export default ({ command, mode }: ConfigEnv): UserConfig => {
   let env = {} as any
@@ -92,7 +95,9 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       ViteEjsPlugin({
         title: env.VITE_APP_TITLE
       }),
-      UnoCSS()
+      UnoCSS(),
+      generateNavigationPlugin(root),
+      moveHtmlToRootPlugin(root)
     ],
 
     css: {
@@ -127,7 +132,7 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       // brotliSize: false,
       rollupOptions: {
         plugins: env.VITE_USE_BUNDLE_ANALYZER === 'true' ? [visualizer()] : undefined,
-        // 拆包
+        input: getHtmlInputs(),
         output: {
           manualChunks: {
             'vue-chunks': ['vue', 'vue-router', 'pinia', 'vue-i18n'],

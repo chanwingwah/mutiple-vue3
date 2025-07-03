@@ -5,10 +5,11 @@
   "author": "Archer <502431556@qq.com>",
   "private": false,
   "type": "module",
-  "scripts": {
-    "i": "pnpm install",
-    "dev": "pnpm vite --mode base",
-    "ts:check": "pnpm vue-tsc --noEmit --skipLibCheck",
+      "scripts": {
+      "i": "pnpm install",
+      "dev": "pnpm vite --mode base",
+      "generate:nav": "node scripts/generate-nav.js",
+      "ts:check": "pnpm vue-tsc --noEmit --skipLibCheck",
     "build:pro": "pnpm vite build --mode pro",
     "build:gitee": "pnpm vite build --mode gitee",
     "build:dev": "pnpm vite build --mode dev",
