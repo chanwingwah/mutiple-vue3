@@ -14,7 +14,7 @@ import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import { createStyleImportPlugin, ElementPlusResolve } from 'vite-plugin-style-import'
 import UnoCSS from 'unocss/vite'
 import { visualizer } from 'rollup-plugin-visualizer'
-import { getHtmlInputs, generateNavigationPlugin, moveHtmlToRootPlugin } from './build/multi-page.js'
+import { getHtmlInputs, generateNavigationPlugin } from './build/multi-page.js'
 
 // https://vitejs.dev/config/
 const root = process.cwd()
@@ -96,8 +96,7 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
         title: env.VITE_APP_TITLE
       }),
       UnoCSS(),
-      generateNavigationPlugin(root),
-      moveHtmlToRootPlugin(root)
+      generateNavigationPlugin(root)
     ],
 
     css: {
@@ -127,7 +126,7 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
     },
     build: {
       target: 'es2015',
-      outDir: env.VITE_OUT_DIR || 'dist',
+      outDir: env.VITE_OUT_DIR || 'dist-dev/frontend',
       sourcemap: env.VITE_SOURCEMAP === 'true',
       // brotliSize: false,
       rollupOptions: {
