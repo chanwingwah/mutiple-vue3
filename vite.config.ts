@@ -131,7 +131,7 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       // brotliSize: false,
       rollupOptions: {
         plugins: env.VITE_USE_BUNDLE_ANALYZER === 'true' ? [visualizer()] : undefined,
-        input: getHtmlInputs(),
+        input: getHtmlInputs() as any,
         output: {
           manualChunks: {
             'vue-chunks': ['vue', 'vue-router', 'pinia', 'vue-i18n'],
