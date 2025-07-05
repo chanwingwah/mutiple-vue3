@@ -1,8 +1,6 @@
 import { AxiosResponse, InternalAxiosRequestConfig } from './types'
-import { ElMessage } from 'element-plus'
 import qs from 'qs'
-import { SUCCESS_CODE, TRANSFORM_REQUEST_DATA } from '@/constants'
-// import { useUserStoreWithOut } from '@/store/modules/user'
+import { TRANSFORM_REQUEST_DATA } from '@/constants'
 import { objToFormData } from '@/utils'
 
 const defaultRequestInterceptors = (config: InternalAxiosRequestConfig) => {
@@ -39,16 +37,54 @@ const defaultResponseInterceptors = (response: AxiosResponse) => {
   if (response?.config?.responseType === 'blob') {
     // 如果是文件流，直接过
     return response
-  } else if (response.data.code === SUCCESS_CODE) {
-    return response.data
-  } else {
-    ElMessage.error(response?.data?.message)
-    if (response?.data?.code === 401) {
-      // const userStore = useUserStoreWithOut()
-      // userStore.logout()
-      // todo: 退出登录
-    }
   }
+
+  // 检查是否返回了HTML页面（通常是错误页面）
+  if (typeof response.data === 'string' && response.data.includes('<html>')) {
+    // 使用iframe显示HTML，这样可以保持相对路径的正确性
+    const iframe = document.createElement('iframe')
+    iframe.style.cssText = `
+        width: 100%;
+        height: 100vh;
+        border: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 9999;
+      `
+    // 清空当前页面内容并添加iframe和关闭按钮
+    document.body.innerHTML = ''
+    document.body.appendChild(iframe)
+
+    // 将HTML内容写入iframe
+    const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document
+    if (iframeDoc) {
+      iframeDoc.open()
+      iframeDoc.write(response.data)
+      iframeDoc.close()
+    }
+
+    return Promise.reject(new Error('接口返回HTML页面'))
+  }
+
+  // 检查响应数据结构
+  if (response.data && typeof response.data === 'object') {
+    return response.data
+    // if (response.data.code === SUCCESS_CODE) {
+    //   return response.data
+    // } else {
+    //   ElMessage.error(response?.data?.message || '请求失败')
+    //   if (response?.data?.code === 401) {
+    //     // const userStore = useUserStoreWithOut()
+    //     // userStore.logout()
+    //     // todo: 退出登录
+    //   }
+    //   return Promise.reject(response.data)
+    // }
+  }
+
+  // 如果响应数据不是预期的格式，直接返回
+  return response.data
 }
 
 export { defaultResponseInterceptors, defaultRequestInterceptors }

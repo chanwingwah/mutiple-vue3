@@ -380,7 +380,7 @@ pnpm build:dev
 **.env.dev**
 ```env
 # 基础路径
-VITE_BASE_PATH=/frontend/
+VITE_BASE_PATH=/svcManager/frontend/
 
 # 输出目录
 VITE_OUT_DIR=dist-dev/frontend

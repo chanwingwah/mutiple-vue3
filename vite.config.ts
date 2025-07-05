@@ -148,10 +148,18 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       port: 4000,
       proxy: {
         // 选项写法
-        '/api': {
-          target: 'http://127.0.0.1:8000',
+        '/svcManager': {
+          target: 'http://localhost:8080',
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api/, '')
+          // withCredentials: true,
+          // rewrite: (path) => path.replace(/^\/api/, ''),
+          configure: (proxy, options) => {
+            proxy.on('proxyReq', (proxyReq, req, res) => {
+              if (req.headers.cookie) {
+                proxyReq.setHeader('Cookie', req.headers.cookie)
+              }
+            })
+          }
         }
       },
       hmr: {

@@ -1,11 +1,12 @@
 import request from '@/axios'
 
-// 获取所有字典
-export const getDictApi = () => {
-  return request.get({ url: '/mock/dict/list' })
-}
-
-// 模拟获取某个字典
-export const getDictOneApi = async () => {
-  return request.get({ url: '/mock/dict/one' })
+// svcManager/ccbManager
+export const ccbManager = async (data: any) => {
+  return request.post({
+    url: '/svcManager/ccbManager',
+    data: data,
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  })
 }
